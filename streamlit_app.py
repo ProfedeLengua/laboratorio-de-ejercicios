@@ -1,5 +1,5 @@
 import streamlit as st
-import requests
+from google import genai
 import json
 
 # Configuración visual de la página web (Estilo académico)
@@ -7,7 +7,7 @@ st.set_page_config(page_title="Laboratorio de Lengua y Literatura", page_icon="�
 
 st.title("📝 Laboratorio de Lengua y Literatura")
 st.subheader("Generador inteligente de exámenes de ESO (Comunidad de Madrid)")
-st.caption("Herramienta 100% gratuita y de código abierto basada en el Decreto 65/2022")
+st.caption("Herramienta de código abierto basada en el Decreto 65/2022")
 
 # Leemos la clave de forma segura desde el panel secreto de Streamlit
 CLAVE_API = st.secrets["gemini_key"]
@@ -55,7 +55,10 @@ if boton_generar:
         
         with st.spinner("Fabricando el examen según el currículo de Madrid... Por favor, espera unos 15 segundos."):
             try:
-                # Instrucción curricular para la IA
+                # 🌟 INICIALIZACIÓN OFICIAL EN LÍNEA: 
+                # Usamos la librería nativa moderna de Google que autoconfigura la ruta sin fallos 404
+                client = genai.Client(api_key=CLAVE_API)
+                
                 prompt_maestro = f"""
                 Genera un examen oficial de Lengua Castellana y Literatura para la Comunidad de Madrid basándote estrictamente en el Decreto 65/2022. 
                 PARÁMETROS:
@@ -72,42 +75,28 @@ if boton_generar:
                 Devuelve directamente el examen sin saludos ni comentarios preliminares.
                 """
                 
-                # URL Base verificada de producción v1
-                url_base = "https://googleapis.com"
-                parametros_consulta = {"key": CLAVE_API}
+                # Ejecutamos la llamada usando el método oficial verificado por Google
+                response = client.models.generate_content(
+                    model='gemini-1.5-flash',
+                    contents=prompt_maestro,
+                )
                 
-                payload = {
-                    "contents": [{
-                        "parts": [{"text": prompt_maestro}]
-                    }]
-                }
-                
-                headers = {"Content-Type": "application/json"}
-                
-                # Ejecutamos la petición enviando los datos
-                respuesta = requests.post(url_base, params=parametros_consulta, json=payload, headers=headers)
-                
-                if respuesta.status_code == 200:
-                    datos = respuesta.json()
-                    
-                    # EXTRACTOR INDEXADO CORREGIDO EN EL INTÉRPRETE: Acceso exacto a las listas [0]
-                    texto_examen = datos['candidates'][0]['content']['parts'][0]['text']
-                    
+                # Extracción nativa garantizada por contrato de la librería
+                if response and response.text:
                     st.success("¡Examen generado con éxito!")
                     st.markdown("---")
-                    st.markdown(texto_examen)
+                    st.markdown(response.text)
                     st.markdown("---")
                     
                     # Botón nativo para descargar el examen listo para Word
                     st.download_button(
                         label="📥 Descargar examen para Word (.txt)",
-                        data=texto_examen,
+                        data=response.text,
                         file_name=f"Examen_{modalidad}_{tematica.replace(' ', '_')}.txt",
                         mime="text/plain"
                     )
                 else:
-                    st.error(f"El servidor de Google rechazó la petición. Código de respuesta: {respuesta.status_code}")
-                    st.text(respuesta.text)
+                    st.error("La IA de Google respondió pero el texto del examen llegó vacío.")
                 
             except Exception as e:
-                st.error(f"Error interno al procesar los datos: {str(e)}")
+                st.error(f"Error al conectar con la IA de Google: {str(e)}")
