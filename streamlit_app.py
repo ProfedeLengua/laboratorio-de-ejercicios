@@ -67,15 +67,13 @@ if boton_generar:
                 ESTRUCTURA REQUERIDA:
                 1. Un texto original e inédito redactado por ti adaptado a la temática, modalidad y nivel sintáctico del curso (entre 150 y 300 palabras).
                 2. Preguntas asociadas a los bloques requeridos utilizando frases literales del texto. Si se pide Sintaxis, usa enunciados del nivel exacto del curso (oración simple para 1º/2º ESO, subordinación para 4º ESO, etc.).
-                3. Sección 'SOLUCIONARIO Y CLAVE DE CORRECCIÓN' con todas las respuestas explicadas.
+                3. Sección 'SOLUCIONARIO Y CLAVE DE CORRECCIÓN' al final.
                 
                 Devuelve directamente el examen sin saludos ni comentarios preliminares.
                 """
                 
-                # 🌟 DIRECCIÓN OFICIAL BLINDADA CONTRA ERRORES: Nomenclatura exacta de Google REST API
-                direccion_servidor = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent"
-                
-                # Pasamos la clave API como parámetro limpio para que requests ponga el signo '?' de forma automática
+                # 🌟 LA CORRECCIÓN REAL EN LA LÍNEA 75: Cambiada oficialmente de v1beta a v1
+                url_base = "https://googleapis.com"
                 parametros_consulta = {"key": CLAVE_API}
                 
                 payload = {
@@ -86,10 +84,10 @@ if boton_generar:
                 
                 headers = {"Content-Type": "application/json"}
                 
-                # Ejecutamos la petición enviando la dirección y los parámetros en cajones separados por completo
-                respuesta = requests.post(direccion_servidor, params=parametros_consulta, json=payload, headers=headers)
+                # Ejecutamos la petición enviando los datos de forma segura
+                respuesta = requests.post(url_base, params=parametros_consulta, json=payload, headers=headers)
                 
-                # Si Google acepta la petición, desempaquetamos el examen
+                # Desempaquetamos el examen
                 if respuesta.status_code == 200:
                     datos = respuesta.json()
                     texto_examen = datos['candidates'][0]['content']['parts'][0]['text']
