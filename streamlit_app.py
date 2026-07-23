@@ -1,22 +1,32 @@
 import streamlit as st
 
-# Configuración de la página de bienvenida
+# 🌟 NUEVA DIRECTRIZ EXPLICITA DE NAVEGACIÓN (Evita el bloqueo del menú lateral)
+# Definimos los archivos reales que componen nuestra plataforma escolar
+pagina_inicio = st.Page("streamlit_app.py", title="Inicio", icon="🏫", default=True)
+pagina_examenes = st.Page("pages/1_📝_Exámenes.py", title="Generador de Exámenes", icon="📝")
+
+# Inicializamos el menú de navegación nativo de Streamlit
+navegacion = st.navigation([pagina_inicio, pagina_examenes])
+
+# Configuración de la pantalla de bienvenida
 st.set_page_config(page_title="Asistente de Lengua - Inicio", page_icon="🏫", layout="centered")
 
-# Estética y presentación de la Portada
+# Ejecutamos la navegación para que pinte la página correspondiente
+navegacion.run()
+
+# 🎨 TODO EL DISEÑO DE TU PORTADA VISUAL DE BIENVENIDA:
 st.title("🏫 Centro de Recursos Didácticos de Lengua")
 st.subheader("Plataforma Inteligente para el Profesorado de ESO (Comunidad de Madrid)")
 st.markdown("---")
 
 st.write(
-    "¡Bienvenido/a al Laboratorio Pedagógico! Esta aplicación multiplataforma está diseñada "
+    "¡Sé bienvenido al Laboratorio Pedagógico! Esta aplicación multiplataforma está diseñada "
     "para ayudar al profesorado de Secundaria a automatizar y enriquecer su práctica docente "
-    "bajo las directrices oficiales del **Decreto 65/2022 de la Comunidad de Madrid**."
+    "under las directrices oficiales del **Decreto 65/2022 de la Comunidad de Madrid**."
 )
 
 st.info("👈 Utiliza el menú lateral izquierdo para navegar por las distintas herramientas de la aplicación.")
 
-# Bloques informativos visuales para el profesor
 st.markdown("### 🛠️ Herramientas Disponibles:")
 
 col1, col2 = st.columns(2)
