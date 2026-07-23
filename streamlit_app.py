@@ -72,8 +72,11 @@ if boton_generar:
                 Devuelve directamente el examen sin saludos ni comentarios preliminares.
                 """
                 
-                # 🌟 SINTAXIS OFICIAL HTTP CERTIFICADA POR GOOGLE: Modelo separado por barras y acción al final
-                url_correcta = f"https://googleapis.com{CLAVE_API}"
+                # 🌟 SOLUCIÓN AL BLINDAJE INTERNO:
+                # Separamos radicalmente la URL base de los parámetros de consulta. 
+                # De esta forma, la librería 'requests' se ve obligada a meter el signo '?' de forma matemática de fondo.
+                url_base = "https://googleapis.com"
+                parametros_consulta = {"key": CLAVE_API}
                 
                 payload = {
                     "contents": [{
@@ -83,12 +86,11 @@ if boton_generar:
                 
                 headers = {"Content-Type": "application/json"}
                 
-                # Ejecutamos la petición enviando el paquete
-                respuesta = requests.post(url_correcta, json=payload, headers=headers)
+                # Ejecutamos la petición enviando la dirección y los parámetros en cajones separados por completo
+                respuesta = requests.post(url_base, params=parametros_consulta, json=payload, headers=headers)
                 
                 if respuesta.status_code == 200:
                     datos = respuesta.json()
-                    # Extracción posicional exacta de la respuesta de Google
                     texto_examen = datos['candidates'][0]['content']['parts'][0]['text']
                     
                     st.success("¡Examen generado con éxito!")
