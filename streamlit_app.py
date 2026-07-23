@@ -1,5 +1,6 @@
 import streamlit as st
-import google.generativeai as genai
+import requests
+import json
 
 # Configuración visual de la página web (Estilo académico)
 st.set_page_config(page_title="Laboratorio de Lengua y Literatura", page_icon="📝", layout="centered")
@@ -8,11 +9,8 @@ st.title("📝 Laboratorio de Lengua y Literatura")
 st.subheader("Generador inteligente de exámenes de ESO (Comunidad de Madrid)")
 st.caption("Herramienta 100% gratuita y de código abierto basada en el Decreto 65/2022")
 
-# 1. Leemos la clave de forma segura desde el panel secreto de Streamlit
+# Leemos la clave de forma segura desde el panel secreto de Streamlit
 CLAVE_API = st.secrets["gemini_key"]
-
-# 2. Configuración GLOBAL obligatoria de la IA de Google (Válida para claves AIza y AQ.)
-genai.configure(api_key=CLAVE_API)
 
 # Configuración del formulario con los menús desplegables de la ESO
 with st.form("formulario_examen"):
@@ -57,9 +55,7 @@ if boton_generar:
         
         with st.spinner("Fabricando el examen según el currículo de Madrid... Por favor, espera unos 15 segundos."):
             try:
-                # Inicialización nativa directa según el manual oficial de Google
-                model = genai.GenerativeModel('gemini-1.5-flash')
-                
+                # Instrucción curricular para la IA
                 prompt_maestro = f"""
                 Genera un examen oficial de Lengua Castellana y Literatura para la Comunidad de Madrid basándote estrictamente en el Decreto 65/2022. 
                 PARÁMETROS:
@@ -76,21 +72,40 @@ if boton_generar:
                 Devuelve directamente el examen sin saludos ni comentarios preliminares.
                 """
                 
-                respuesta = model.generate_content(prompt_maestro)
+                # 🌟 CONEXIÓN DIRECTA POR HTTP (Evita el fallo de compatibilidad de la clave AQ.)
+                url = f"https://googleapis.com{CLAVE_API}"
                 
-                # Mostrar el resultado maquetado en pantalla
-                st.success("¡Examen generado con éxito!")
-                st.markdown("---")
-                st.markdown(respuesta.text)
-                st.markdown("---")
+                payload = {
+                    "contents": [{
+                        "parts": [{"text": prompt_maestro}]
+                    }]
+                }
                 
-                # Botón nativo para descargar el examen como archivo de texto listo para Word
-                st.download_button(
-                    label="📥 Descargar examen para Word (.txt)",
-                    data=respuesta.text,
-                    file_name=f"Examen_{modalidad}_{tematica.replace(' ', '_')}.txt",
-                    mime="text/plain"
-                )
+                headers = {"Content-Type": "application/json"}
+                
+                # Ejecutamos la petición directa al servidor de Google
+                respuesta = requests.post(url, json=payload, headers=headers)
+                datos = respuesta.json()
+                
+                # Extracción manual de los datos del examen
+                if respuesta.status_code == 200:
+                    texto_examen = datos['candidates'][0]['content']['parts'][0]['text']
+                    
+                    st.success("¡Examen generado con éxito!")
+                    st.markdown("---")
+                    st.markdown(texto_examen)
+                    st.markdown("---")
+                    
+                    # Botón nativo para descargar el examen listo para Word
+                    st.download_button(
+                        label="📥 Descargar examen para Word (.txt)",
+                        data=texto_examen,
+                        file_name=f"Examen_{modalidad}_{tematica.replace(' ', '_')}.txt",
+                        mime="text/plain"
+                    )
+                else:
+                    mensaje_error = datos.get('error', {}).get('message', 'Error desconocido')
+                    st.error(f"Error de Google: {mensaje_error}")
                 
             except Exception as e:
-                st.error(f"Error al conectar con la IA: {str(e)}")
+                st.error(f"Error al procesar el examen: {str(e)}")
