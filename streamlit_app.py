@@ -72,11 +72,8 @@ if boton_generar:
                 Devuelve directamente el examen sin saludos ni comentarios preliminares.
                 """
                 
-                # 🌟 SEPARACIÓN BLINDADA: Evita al 100% que la URL de Google y tu clave se vuelvan a fusionar
-                direccion_servidor = "https://googleapis.com"
-                
-                # Pasamos la clave como un parámetro limpio e independiente
-                parametros = {"key": CLAVE_API}
+                # 🌟 SINTAXIS OFICIAL HTTP CERTIFICADA POR GOOGLE: Modelo separado por barras y acción al final
+                url_correcta = f"https://googleapis.com{CLAVE_API}"
                 
                 payload = {
                     "contents": [{
@@ -86,12 +83,12 @@ if boton_generar:
                 
                 headers = {"Content-Type": "application/json"}
                 
-                # Ejecutamos la petición enviando la dirección y la clave por separado
-                respuesta = requests.post(direccion_servidor, params=parametros, json=payload, headers=headers)
-                datos = respuesta.json()
+                # Ejecutamos la petición enviando el paquete
+                respuesta = requests.post(url_correcta, json=payload, headers=headers)
                 
-                # Extracción manual de los datos del examen
                 if respuesta.status_code == 200:
+                    datos = respuesta.json()
+                    # Extracción posicional exacta de la respuesta de Google
                     texto_examen = datos['candidates'][0]['content']['parts'][0]['text']
                     
                     st.success("¡Examen generado con éxito!")
@@ -107,8 +104,8 @@ if boton_generar:
                         mime="text/plain"
                     )
                 else:
-                    mensaje_error = datos.get('error', {}).get('message', 'Error desconocido')
-                    st.error(f"Error de Google: {mensaje_error}")
+                    st.error(f"El servidor de Google rechazó la petición. Código de respuesta: {respuesta.status_code}")
+                    st.text(respuesta.text)
                 
             except Exception as e:
-                st.error(f"Error al procesar el examen: {str(e)}")
+                st.error(f"Error interno al procesar los datos: {str(e)}")
