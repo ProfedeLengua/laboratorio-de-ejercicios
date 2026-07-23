@@ -1,6 +1,5 @@
 import streamlit as st
 import google.generativeai as genai
-import json
 
 # Configuración visual de la página web (Estilo académico)
 st.set_page_config(page_title="Laboratorio de Lengua y Literatura", page_icon="📝", layout="centered")
@@ -9,8 +8,11 @@ st.title("📝 Laboratorio de Lengua y Literatura")
 st.subheader("Generador inteligente de exámenes de ESO (Comunidad de Madrid)")
 st.caption("Herramienta 100% gratuita y de código abierto basada en el Decreto 65/2022")
 
-# Leemos la clave de forma segura desde el panel secreto de Streamlit
+# 1. Leemos la clave de forma segura desde el panel secreto de Streamlit
 CLAVE_API = st.secrets["gemini_key"]
+
+# 2. Configuración GLOBAL obligatoria de la IA de Google (Válida para claves AIza y AQ.)
+genai.configure(api_key=CLAVE_API)
 
 # Configuración del formulario con los menús desplegables de la ESO
 with st.form("formulario_examen"):
@@ -42,7 +44,7 @@ with st.form("formulario_examen"):
         
     boton_generar = st.form_submit_button("✨ Generar Examen Gratis")
 
-# Acción al pulsar el botón (Alineación corregida estrictamente)
+# Acción al pulsar el botón
 if boton_generar:
     if not tematica.strip():
         st.error("Por favor, introduce una temática para el texto.")
@@ -55,11 +57,8 @@ if boton_generar:
         
         with st.spinner("Fabricando el examen según el currículo de Madrid... Por favor, espera unos 15 segundos."):
             try:
-                # Inicialización limpia inyectando la clave directamente
-                model = genai.GenerativeModel(
-                    model_name='gemini-2.5-flash',
-                    client_options={"api_key": CLAVE_API}
-                )
+                # Inicialización nativa directa según el manual oficial de Google
+                model = genai.GenerativeModel('gemini-1.5-flash')
                 
                 prompt_maestro = f"""
                 Genera un examen oficial de Lengua Castellana y Literatura para la Comunidad de Madrid basándote estrictamente en el Decreto 65/2022. 
