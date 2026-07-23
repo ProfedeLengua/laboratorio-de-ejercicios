@@ -55,8 +55,7 @@ if boton_generar:
         
         with st.spinner("Fabricando el examen según el currículo de Madrid... Por favor, espera unos 15 segundos."):
             try:
-                # 🌟 INICIALIZACIÓN OFICIAL EN LÍNEA: 
-                # Usamos la librería nativa moderna de Google que autoconfigura la ruta sin fallos 404
+                # Inicialización oficial con la pasarela nativa moderna de Google
                 client = genai.Client(api_key=CLAVE_API)
                 
                 prompt_maestro = f"""
@@ -75,13 +74,13 @@ if boton_generar:
                 Devuelve directamente el examen sin saludos ni comentarios preliminares.
                 """
                 
-                # Ejecutamos la llamada usando el método oficial verificado por Google
+                # 🌟 EL CAMBIO CLAVE MUNDIAL: Llamamos al modelo activo de producción actual (gemini-2.5-flash)
                 response = client.models.generate_content(
-                    model='gemini-1.5-flash',
+                    model='gemini-2.5-flash',
                     contents=prompt_maestro,
                 )
                 
-                # Extracción nativa garantizada por contrato de la librería
+                # Extracción garantizada por la librería oficial
                 if response and response.text:
                     st.success("¡Examen generado con éxito!")
                     st.markdown("---")
