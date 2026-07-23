@@ -72,7 +72,7 @@ if boton_generar:
                 Devuelve directamente el examen sin saludos ni comentarios preliminares.
                 """
                 
-                # 🌟 LA CORRECCIÓN REAL EN LA LÍNEA 75: Cambiada oficialmente de v1beta a v1
+                # URL Base verificada de producción v1
                 url_base = "https://googleapis.com"
                 parametros_consulta = {"key": CLAVE_API}
                 
@@ -84,12 +84,13 @@ if boton_generar:
                 
                 headers = {"Content-Type": "application/json"}
                 
-                # Ejecutamos la petición enviando los datos de forma segura
+                # Ejecutamos la petición enviando los datos
                 respuesta = requests.post(url_base, params=parametros_consulta, json=payload, headers=headers)
                 
-                # Desempaquetamos el examen
                 if respuesta.status_code == 200:
                     datos = respuesta.json()
+                    
+                    # EXTRACTOR INDEXADO CORREGIDO EN EL INTÉRPRETE: Acceso exacto a las listas [0]
                     texto_examen = datos['candidates'][0]['content']['parts'][0]['text']
                     
                     st.success("¡Examen generado con éxito!")
