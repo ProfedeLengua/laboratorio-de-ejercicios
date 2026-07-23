@@ -10,7 +10,7 @@ st.subheader("Generador inteligente de exámenes de ESO (Comunidad de Madrid)")
 st.caption("Herramienta 100% gratuita y de código abierto basada en el Decreto 65/2022")
 
 # 🛑 PON TU CLAVE DE GOOGLE AI STUDIO AQUÍ ADENTRO MANTENIENDO LAS COMILLAS:
-CLAVE_API = "AQ.Ab8RN6JV632IqgEWQDfnaO7vEi0IkH_JDGw61apxFwxQ-T1NuA"
+CLAVE_API = st.secrets["gemini_key"]
 
 # Configuración del formulario con los menús desplegables de la ESO
 with st.form("formulario_examen"):
