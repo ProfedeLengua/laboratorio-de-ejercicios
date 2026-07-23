@@ -72,10 +72,10 @@ if boton_generar:
                 Devuelve directamente el examen sin saludos ni comentarios preliminares.
                 """
                 
-                # 🌟 SOLUCIÓN AL BLINDAJE INTERNO:
-                # Separamos radicalmente la URL base de los parámetros de consulta. 
-                # De esta forma, la librería 'requests' se ve obligada a meter el signo '?' de forma matemática de fondo.
-                url_base = "https://googleapis.com"
+                # 🌟 LA DIRECCIÓN WEB OFICIAL CORREGIDA MANUALMENTE:
+                # Se utiliza la ruta con la etiqueta "-latest" que exige Google para responder por HTTP externo
+                direccion_servidor = "https://googleapis.com"
+                
                 parametros_consulta = {"key": CLAVE_API}
                 
                 payload = {
@@ -86,11 +86,12 @@ if boton_generar:
                 
                 headers = {"Content-Type": "application/json"}
                 
-                # Ejecutamos la petición enviando la dirección y los parámetros en cajones separados por completo
-                respuesta = requests.post(url_base, params=parametros_consulta, json=payload, headers=headers)
+                # Ejecutamos la petición enviando los datos de forma segura
+                respuesta = requests.post(direccion_servidor, params=parametros_consulta, json=payload, headers=headers)
+                datos = respuesta.json()
                 
+                # Extracción manual de los datos del examen
                 if respuesta.status_code == 200:
-                    datos = respuesta.json()
                     texto_examen = datos['candidates'][0]['content']['parts'][0]['text']
                     
                     st.success("¡Examen generado con éxito!")
