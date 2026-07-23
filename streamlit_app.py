@@ -9,4 +9,3 @@ navegacion = st.navigation([pagina_inicio, pagina_examenes])
 
 # Ejecutamos la navegación segura
 navegacion.run()
-go abierto | 100% Gratuita")
