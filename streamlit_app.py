@@ -67,13 +67,15 @@ if boton_generar:
                 ESTRUCTURA REQUERIDA:
                 1. Un texto original e inédito redactado por ti adaptado a la temática, modalidad y nivel sintáctico del curso (entre 150 y 300 palabras).
                 2. Preguntas asociadas a los bloques requeridos utilizando frases literales del texto. Si se pide Sintaxis, usa enunciados del nivel exacto del curso (oración simple para 1º/2º ESO, subordinación para 4º ESO, etc.).
-                3. Sección 'SOLUCIONARIO Y CLAVE DE CORRECCIÓN' al final.
+                3. Sección 'SOLUCIONARIO Y CLAVE DE CORRECCIÓN' con todas las respuestas explicadas.
                 
                 Devuelve directamente el examen sin saludos ni comentarios preliminares.
                 """
                 
-                # 🌟 ACTUALIZACIÓN CRÍTICA DE RUTA: Cambiamos a la versión estable oficial v1 y el modelo flash definitivo
-                direccion_servidor = "https://googleapis.com"
+                # 🌟 DIRECCIÓN OFICIAL BLINDADA CONTRA ERRORES: Nomenclatura exacta de Google REST API
+                direccion_servidor = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent"
+                
+                # Pasamos la clave API como parámetro limpio para que requests ponga el signo '?' de forma automática
                 parametros_consulta = {"key": CLAVE_API}
                 
                 payload = {
@@ -84,10 +86,10 @@ if boton_generar:
                 
                 headers = {"Content-Type": "application/json"}
                 
-                # Ejecutamos la petición enviando los datos de forma segura
+                # Ejecutamos la petición enviando la dirección y los parámetros en cajones separados por completo
                 respuesta = requests.post(direccion_servidor, params=parametros_consulta, json=payload, headers=headers)
                 
-                # Control de seguridad: Si Google rechaza la petición, leemos su motivo sin romper la web
+                # Si Google acepta la petición, desempaquetamos el examen
                 if respuesta.status_code == 200:
                     datos = respuesta.json()
                     texto_examen = datos['candidates'][0]['content']['parts'][0]['text']
@@ -105,10 +107,8 @@ if boton_generar:
                         mime="text/plain"
                     )
                 else:
-                    st.error(f"El servidor de Google rechazó el acceso (Código {respuesta.status_code}).")
-                    st.warning("Motivo oficial de Google:")
-                    st.code(respuesta.text, language="json")
+                    st.error(f"El servidor de Google rechazó la petición. Código de respuesta: {respuesta.status_code}")
+                    st.text(respuesta.text)
                 
             except Exception as e:
-                st.error(f"Error al procesar la respuesta de la IA: {str(e)}")
-                st.info("Esto suele deberse a que los datos devueltos no tienen el formato esperado. Revisa el código de error de arriba.")
+                st.error(f"Error interno al procesar los datos: {str(e)}")
