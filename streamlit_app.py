@@ -53,7 +53,7 @@ if boton_generar:
         if p3: bloques.append("Análisis Sintáctico")
         if p4: bloques.append("Educación Literaria")
         
-        with St.spinner("Fabricando el examen según el currículo de Madrid... Por favor, espera unos 15 segundos."):
+        with st.spinner("Fabricando el examen según el currículo de Madrid... Por favor, espera unos 15 segundos."):
             try:
                 # 🌟 CORRECCIÓN CRÍTICA PARA EL NUEVO FORMATO DE CLAVES "AQ."
                 # Inicializamos el cliente forzando la clave de forma explícita en la configuración
