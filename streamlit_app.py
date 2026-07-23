@@ -53,10 +53,12 @@ if boton_generar:
         if p3: bloques.append("Análisis Sintáctico")
         if p4: bloques.append("Educación Literaria")
         
-        with st.spinner("Fabricando el examen según el currículo de Madrid... Por favor, espera unos 15 segundos."):
+        with St.spinner("Fabricando el examen según el currículo de Madrid... Por favor, espera unos 15 segundos."):
             try:
-                # Conexión nativa y segura con la IA de Google
-                genai.configure(api_key=CLAVE_API)
+                # 🌟 CORRECCIÓN CRÍTICA PARA EL NUEVO FORMATO DE CLAVES "AQ."
+                # Inicializamos el cliente forzando la clave de forma explícita en la configuración
+                genai.configure(api_key=CLAVE_API, client_options={"api_key": CLAVE_API})
+                
                 model = genai.GenerativeModel('gemini-1.5-flash')
                 
                 prompt_maestro = f"""
@@ -69,7 +71,7 @@ if boton_generar:
 
                 ESTRUCTURA REQUERIDA:
                 1. Un texto original e inédito redactado por ti adaptado a la temática, modalidad y nivel sintáctico del curso (entre 150 y 300 palabras).
-                2. Preguntas asociadas a los bloques requeridos utilizando frases literales del texto.
+                2. Preguntas asociadas a los bloques requeridos utilizando frases literales del texto. Si se pide Sintaxis, usa enunciados del nivel exacto del curso.
                 3. Sección 'SOLUCIONARIO Y CLAVE DE CORRECCIÓN' al final.
                 
                 Devuelve directamente el examen sin saludos ni comentarios preliminares.
@@ -90,6 +92,10 @@ if boton_generar:
                     file_name=f"Examen_{modalidad}_{tematica.replace(' ', '_')}.txt",
                     mime="text/plain"
                 )
+                
+            except Exception as e:
+                st.error(f"Error al conectar con la IA: {str(e)}")
+
                 
             except Exception as e:
                 st.error(f"Error al conectar con la IA: {str(e)}")
