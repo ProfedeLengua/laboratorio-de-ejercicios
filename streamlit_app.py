@@ -72,8 +72,11 @@ if boton_generar:
                 Devuelve directamente el examen sin saludos ni comentarios preliminares.
                 """
                 
-                # 🌟 CONEXIÓN DIRECTA POR HTTP (Evita el fallo de compatibilidad de la clave AQ.)
-                url = f"https://googleapis.com{CLAVE_API}"
+                # 🌟 SEPARACIÓN BLINDADA: Evita al 100% que la URL de Google y tu clave se vuelvan a fusionar
+                direccion_servidor = "https://googleapis.com"
+                
+                # Pasamos la clave como un parámetro limpio e independiente
+                parametros = {"key": CLAVE_API}
                 
                 payload = {
                     "contents": [{
@@ -83,8 +86,8 @@ if boton_generar:
                 
                 headers = {"Content-Type": "application/json"}
                 
-                # Ejecutamos la petición directa al servidor de Google
-                respuesta = requests.post(url, json=payload, headers=headers)
+                # Ejecutamos la petición enviando la dirección y la clave por separado
+                respuesta = requests.post(direccion_servidor, params=parametros, json=payload, headers=headers)
                 datos = respuesta.json()
                 
                 # Extracción manual de los datos del examen
