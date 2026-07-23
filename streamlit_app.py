@@ -9,7 +9,7 @@ st.title("📝 Laboratorio de Lengua y Literatura")
 st.subheader("Generador inteligente de exámenes de ESO (Comunidad de Madrid)")
 st.caption("Herramienta 100% gratuita y de código abierto basada en el Decreto 65/2022")
 
-# 🛑 PON TU CLAVE DE GOOGLE AI STUDIO AQUÍ ADENTRO MANTENIENDO LAS COMILLAS:
+# Leemos la clave de forma segura desde el panel secreto de Streamlit
 CLAVE_API = st.secrets["gemini_key"]
 
 # Configuración del formulario con los menús desplegables de la ESO
@@ -42,7 +42,7 @@ with st.form("formulario_examen"):
         
     boton_generar = st.form_submit_button("✨ Generar Examen Gratis")
 
-# Acción al pulsar el botón
+# Acción al pulsar el botón (Alineación corregida estrictamente)
 if boton_generar:
     if not tematica.strip():
         st.error("Por favor, introduce una temática para el texto.")
@@ -53,10 +53,9 @@ if boton_generar:
         if p3: bloques.append("Análisis Sintáctico")
         if p4: bloques.append("Educación Literaria")
         
-               with st.spinner("Fabricando el examen según el currículo de Madrid... Por favor, espera unos 15 segundos."):
+        with st.spinner("Fabricando el examen según el currículo de Madrid... Por favor, espera unos 15 segundos."):
             try:
-                # 🌟 CONFIGURACIÓN LIMPIA Y COMPATIBLE AL 100% CON TU CLAVE NUEVA "AQ."
-                # Inicializamos el modelo inyectando la clave directamente en sus opciones, sin duplicados
+                # Inicialización limpia inyectando la clave directamente
                 model = genai.GenerativeModel(
                     model_name='gemini-2.5-flash',
                     client_options={"api_key": CLAVE_API}
