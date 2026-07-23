@@ -1,11 +1,14 @@
 import streamlit as st
 
-# 🌟 DIRECTOR DE ORQUESTA: Definimos las rutas reales separadas para evitar el bucle infinito
+# Director de orquesta: define los archivos de origen de la plataforma
 pagina_inicio = st.Page("pages/0_🏫_Inicio.py", title="Inicio", icon="🏫", default=True)
 pagina_examenes = st.Page("pages/1_📝_Exámenes.py", title="Generador de Exámenes", icon="📝")
 
-# Inicializamos el menú de navegación con la lista de herramientas
+# Inicialización segura de la barra de navegación
 navegacion = st.navigation([pagina_inicio, pagina_examenes])
 
-# Ejecutamos la navegación segura
+# Configuración base de la web
+st.set_page_config(page_title="Asistente de Lengua - Inicio", page_icon="🏫", layout="centered")
+
+# Ejecución de la ruta elegida por el profesor en el menú
 navegacion.run()
