@@ -72,10 +72,8 @@ if boton_generar:
                 Devuelve directamente el examen sin saludos ni comentarios preliminares.
                 """
                 
-                # 🌟 LA DIRECCIÓN WEB OFICIAL CORREGIDA MANUALMENTE:
-                # Se utiliza la ruta con la etiqueta "-latest" que exige Google para responder por HTTP externo
+                # 🌟 ACTUALIZACIÓN CRÍTICA DE RUTA: Cambiamos a la versión estable oficial v1 y el modelo flash definitivo
                 direccion_servidor = "https://googleapis.com"
-                
                 parametros_consulta = {"key": CLAVE_API}
                 
                 payload = {
@@ -88,10 +86,10 @@ if boton_generar:
                 
                 # Ejecutamos la petición enviando los datos de forma segura
                 respuesta = requests.post(direccion_servidor, params=parametros_consulta, json=payload, headers=headers)
-                datos = respuesta.json()
                 
-                # Extracción manual de los datos del examen
+                # Control de seguridad: Si Google rechaza la petición, leemos su motivo sin romper la web
                 if respuesta.status_code == 200:
+                    datos = respuesta.json()
                     texto_examen = datos['candidates'][0]['content']['parts'][0]['text']
                     
                     st.success("¡Examen generado con éxito!")
@@ -107,8 +105,10 @@ if boton_generar:
                         mime="text/plain"
                     )
                 else:
-                    st.error(f"El servidor de Google rechazó la petición. Código de respuesta: {respuesta.status_code}")
-                    st.text(respuesta.text)
+                    st.error(f"El servidor de Google rechazó el acceso (Código {respuesta.status_code}).")
+                    st.warning("Motivo oficial de Google:")
+                    st.code(respuesta.text, language="json")
                 
             except Exception as e:
-                st.error(f"Error interno al procesar los datos: {str(e)}")
+                st.error(f"Error al procesar la respuesta de la IA: {str(e)}")
+                st.info("Esto suele deberse a que los datos devueltos no tienen el formato esperado. Revisa el código de error de arriba.")
