@@ -17,8 +17,8 @@ with st.form("formulario_examen"):
     curso = st.selectbox(
         "Selecciona el Curso de ESO:",
         [
-            "1º de ESO (Sujeto/Predicado, Narrativa/Lírica tradicional)",
-            "2º de ESO (Oración simple completa, Géneros literarios)",
+            "1º de ESO (Sinónimos/Antónimos, Sujeto/Predicado, Narrativa/Lírica tradicional)",
+            "2º de ESO (Campos Semánticos, Oración simple completa, Géneros literarios)",
             "3º de ESO (Valores de 'se', Coordinadas, Edad Media al S. Oro)",
             "4º de ESO (Subordinación compleja, Siglo XVIII al XX)"
         ]
@@ -74,9 +74,10 @@ if boton_generar:
                 Devuelve directamente el examen sin saludos ni comentarios preliminares.
                 """
                 
-                # 🌟 EL CAMBIO CLAVE MUNDIAL: Llamamos al modelo activo de producción actual (gemini-2.5-flash)
+                # 🌟 EL ALIAS UNIVERSAL DE GOOGLE:
+                # 'gemini-flash-latest' redirige automáticamente al motor de producción vivo sin errores 404
                 response = client.models.generate_content(
-                    model='gemini-2.5-flash',
+                    model='gemini-flash-latest',
                     contents=prompt_maestro,
                 )
                 
