@@ -1,6 +1,5 @@
 import streamlit as st
-import requests
-import json
+from google import genai
 import os
 import base64
 
@@ -12,7 +11,7 @@ st.caption("Selección interactiva de saberes básicos y diseño curricular")
 # Leemos la clave de forma segura desde el panel secreto de Streamlit
 CLAVE_API = st.secrets["gemini_key"]
 
-# 🌟 BANCO DE SABERES BÁSICOS DE MADRID (Simulado por bloques para agilizar la interfaz sin saturar el PDF)
+# BANCO DE SABERES BÁSICOS DE MADRID (Decreto 65/2022)
 SABERES_POR_CURSO = {
     "1º de ESO": [
         "Bloque 1: Biografía lectora y estrategias de elección de textos.",
@@ -48,12 +47,17 @@ SABERES_POR_CURSO = {
     ]
 }
 
-# Función para transformar el PDF de la ley en datos para Google
+# Función oficial para transformar el PDF en un bloque multimedia compatible con google-genai
 def preparar_pdf_para_ia(nombre_archivo):
     ruta_completa = os.path.join("contexto", nombre_archivo)
     if os.path.exists(ruta_completa):
         with open(ruta_completa, "rb") as f:
-            return {"inlineData": {"mimeType": "application/pdf", "data": base64.b64encode(f.read()).decode("utf-8")}}
+            datos_base64 = base64.b64encode(f.read()).decode("utf-8")
+            # Estructura de datos multimedia obligatoria para la librería oficial moderna
+            return genai.types.Part.from_bytes(
+                data=base64.b64decode(datos_base64),
+                mime_type="application/pdf"
+            )
     return None
 
 # Selector de curso prioritario fuera del formulario para actualizar los contenidos al vuelo
@@ -65,13 +69,12 @@ curso_seleccionado = st.selectbox(
 st.markdown("### 🗂️ 2. Configuración de Saberes Básicos (Decreto 65/2022)")
 st.caption("Selecciona los contenidos en la caja izquierda para moverlos al plan de trabajo de la derecha:")
 
-# 🌟 INTERFAZ EN PARALELO (Doble columna para arrastrar/seleccionar contenidos)
+# Interfaz en paralelo (Doble columna interactiva)
 col_disponibles, col_seleccionados = st.columns(2)
 
 with col_disponibles:
     st.info("📋 Contenidos disponibles en el Decreto:")
     saberes_disponibles = SABERES_POR_CURSO[curso_seleccionado]
-    # Sistema de selección múltiple interactiva
     saberes_elegidos = st.multiselect(
         "Haz clic para seleccionar y enviar a la derecha:",
         saberes_disponibles,
@@ -88,7 +91,7 @@ with col_seleccionados:
 
 st.markdown("---")
 
-# Formulario para los parámetros restantes y el botón de envío
+# Formulario para los parámetros restantes
 with st.form("formulario_SDA_avanzado"):
     st.markdown("### 🎛️ 3. Parámetros Finales del Proyecto")
     
@@ -97,7 +100,6 @@ with st.form("formulario_SDA_avanzado"):
         placeholder="Ej: Las 'fake news', el cambio climático, la novela de misterio..."
     )
     
-    # 🌟 LISTA AMPLIADA DE PRODUCTOS FINALES PEDIDOS
     producto_final = st.selectbox(
         "Producto Final Esperado:",
         [
@@ -106,7 +108,7 @@ with st.form("formulario_SDA_avanzado"):
             "Podcast o programa de radio literario grabado en equipo",
             "Debate formal en el aula con turnos de réplica (Oratoria)",
             "Periódico digital escolar o reportaje de investigación escrito",
-            "Campaña publicitaria con cartelería digital y eslóganes redes sociales",
+            "Campaña publicitaria con cartelería digital y eslóganes para redes sociales",
             "Antología lírica comentada e ilustrada por los alumnos",
             "Representación teatral o lectura dramatizada en el salón de actos"
         ]
@@ -123,59 +125,58 @@ if centro_interes:
     elif not centro_interes.strip():
         st.error("Por favor, introduce un centro de interés.")
     else:
-        with st.spinner("Leyendo decreto_madrid.pdf y estructurando tu Situación de Aprendizaje a la carta..."):
+        with st.spinner("Leyendo tu decreto_madrid.pdf y estructurando la Situación de Aprendizaje a la carta..."):
             try:
-                pdf_bocm = preparar_pdf_para_ia("decreto_madrid.pdf")
+                # 🌟 INICIALIZACIÓN CON LA LIBRERÍA OFICIAL SEGURO: Cero errores de URL o 404
+                client = genai.Client(api_key=CLAVE_API)
                 
-                # Instrucción orientada a los saberes específicos que eligió el profesor
+                # Preparamos el PDF del decreto de Madrid
+                parte_pdf_bocm = preparar_pdf_para_ia("decreto_madrid.pdf")
+                
                 indicacion_texto = f"""
                 Actúa como un catedrático experto en Didáctica de la Lengua Castellana y la Literatura. 
-                Se te proporciona el PDF de la normativa oficial de Madrid (decreto_madrid.pdf) como marco legal supremo.
+                Se te proporciona adjunto el PDF de la normativa oficial de Madrid (decreto_madrid.pdf) como marco legal.
                 
                 EL DOCENTE HA SELECCIONADO ESTOS SABERES BÁSICOS ESPECÍFICOS PARA LA UNIDAD:
                 {chr(10).join(saberes_elegidos)}
                 
-                DATOS COMPLEMENTARIOS:
+                DATOS COMPLEMENTARIOS DEL PROYECTO:
                 - CURSO: {curso_seleccionado}
                 - CENTRO DE INTERÉS: {centro_interes}
                 - PRODUCTO FINAL EXIGIDO: {producto_final}
-                - DURACIÓN: {num_sesiones} sesiones.
+                - DURACIÓN ACADÉMICA: {num_sesiones} sesiones.
 
                 INSTRUCCIONES DE REDACCIÓN:
-                Diseña una Situación de Aprendizaje LOMLOE completa. Es OBLIGATORIO que las actividades de la secuencia didáctica (Inicio, Desarrollo y Cierre) estén diseñadas específicamente para enseñar y evaluar los SABERES BÁSICOS SELECCIONADOS por el profesor y que guarden relación con el PRODUCTO FINAL elegido (por ejemplo, si es un cómic con Pixton, detalla el uso de la herramienta informática en el desarrollo; si es un examen tradicional, planifica las sesiones de repaso previas). 
-                Asocia la unidad con Competencias Específicas y Criterios de Evaluación reales del PDF para el curso {curso_seleccionado}. Redacta con lenguaje técnico formal.
+                Diseña una Situación de Aprendizaje LOMLOE completa. Es obligatorio que las actividades de la secuencia didáctica (Inicio, Desarrollo y Cierre) estén diseñadas específicamente para enseñar y evaluar los SABERES BÁSICOS SELECCIONADOS por el profesor y que guarden estrecha relación con el PRODUCTO FINAL elegido (por ejemplo, si es un cómic con Pixton, detalla el uso y evaluación de la herramienta de diseño de cómics; si es un examen tradicional, planifica las sesiones de repaso previas). 
+                Asocia la unidad con Competencias Específicas y Criterios de Evaluación reales extraídos del PDF para el curso {curso_seleccionado}. Redacta con lenguaje técnico formal escolar, sin comentarios informales.
                 """
                 
-                partes_contenido = []
-                if pdf_bocm: partes_contenido.append(pdf_bocm)
-                partes_contenido.append({"text": indicacion_texto})
+                # Empaquetamos el contenido mezclando el PDF de la ley y las instrucciones de texto
+                elementos_envio = []
+                if parte_pdf_bocm:
+                    elementos_envio.append(parte_pdf_bocm)
+                elementos_envio.append(indicacion_texto)
                 
-                url_base = "https://googleapis.com"
-                parametros_consulta = {"key": CLAVE_API}
+                # 🌟 LLAMADA BLINDADA DE GOOGLE: Usa el alias dinámico universal
+                response = client.models.generate_content(
+                    model='gemini-flash-latest',
+                    contents=elementos_envio,
+                )
                 
-                payload = {"contents": [{"parts": partes_contenido}]}
-                headers = {"Content-Type": "application/json"}
-                
-                respuesta = requests.post(url_base, params=parametros_consulta, json=payload, headers=headers)
-                
-                if respuesta.status_code == 200:
-                    datos = respuesta.json()
-                    texto_sda = datos['candidates'][0]['content']['parts'][0]['text']
-                    
+                if response and response.text:
                     st.success("¡Situación de Aprendizaje diseñada con éxito con tus saberes elegidos!")
                     st.markdown("---")
-                    st.markdown(texto_sda)
+                    st.markdown(response.text)
                     st.markdown("---")
                     
                     st.download_button(
                         label="📥 Descargar Proyecto para tu Programación (.txt)",
-                        data=texto_sda,
+                        data=response.text,
                         file_name=f"SDA_{curso_seleccionado.replace(' ', '')}_{producto_final[:10].replace(' ', '_')}.txt",
                         mime="text/plain"
                     )
                 else:
-                    st.error(f"Error de Google al procesar la SDA. Código: {respuesta.status_code}")
-                    st.text(respuesta.text)
+                    st.error("La IA de Google respondió pero el texto de la unidad didáctica llegó vacío.")
                     
             except Exception as e:
-                st.error(f"Error al procesar los archivos: {str(e)}")
+                st.error(f"Error al conectar o procesar con la IA de Google: {str(e)}")
