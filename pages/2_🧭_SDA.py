@@ -3,15 +3,12 @@ from google import genai
 import os
 import base64
 
-# Configuración visual de la pestaña
 st.title("🧭 Diseñador de Situaciones de Aprendizaje")
 st.subheader("Planificación de Secuencias LOMLOE (Madrid)")
-st.caption("Selección interactiva de saberes básicos")
+st.caption("Selección interactiva y acumulativa de saberes básicos")
 
-# Clave de la API
 CLAVE_API = st.secrets["gemini_key"]
 
-# BANCO DE SABERES (Líneas cortadas para evitar errores de formato)
 SABERES_DETALLADOS = {
     "1º de ESO": {
         "Bloque 1: Comunicación": [
@@ -36,7 +33,7 @@ SABERES_DETALLADOS = {
         "Bloque 1: Comunicación": [
             "Análisis de textos descriptivos literarios.",
             "Convenciones del diálogo en textos teatrales.",
-            "Mecanismos de coherencia en la escritura.",
+            "Mecanismos de cohesencia en la escritura.",
             "Técnicas de exposición oral y soportes visuales."
         ],
         "Bloque 2: Lengua": [
@@ -95,124 +92,91 @@ def preparar_pdf_para_ia(nombre_archivo):
     ruta_completa = os.path.join("contexto", nombre_archivo)
     if os.path.exists(ruta_completa):
         with open(ruta_completa, "rb") as f:
-            datos_base64 = base64.b64encode(f.read()).decode("utf-8")
-            return genai.types.Part.from_bytes(
-                data=base64.b64decode(datos_base64),
-                mime_type="application/pdf"
-            )
+            d = base64.b64encode(f.read()).decode("utf-8")
+            return genai.types.Part.from_bytes(data=base64.b64decode(d), mime_type="application/pdf")
     return None
 
-# 1. Selector de curso principal
-st.markdown("### 🎛️ 1. Nivel Académico")
-curso_seleccionado = st.selectbox(
-    "Selecciona el Curso de ESO destinatario:",
-    ["1º de ESO", "2º de ESO", "3º de ESO", "4º de ESO"]
-)
+if "saberes_cesta" not in st.session_state:
+    st.session_state["saberes_cesta"] = []
 
-# 2. Selector de bloque curricular
+st.markdown("### 🎛️ 1. Nivel Académico")
+curso_seleccionado = st.selectbox("Selecciona el Curso de ESO:", ["1º de ESO", "2º de ESO", "3º de ESO", "4º de ESO"])
+
+if "curso_previo" not in st.session_state:
+    st.session_state["curso_previo"] = curso_seleccionado
+elif st.session_state["curso_previo"] != curso_seleccionado:
+    st.session_state["saberes_cesta"] = []
+    st.session_state["curso_previo"] = curso_seleccionado
+
 st.markdown("### 📚 2. Bloque Curricular (Decreto 65/2022)")
 bloques_disponibles = list(SABERES_DETALLADOS[curso_seleccionado].keys())
 bloque_elegido = st.selectbox("Elige el bloque específico:", bloques_disponibles)
 
 st.markdown("### 🗂️ 3. Configuración de Saberes Básicos")
-st.caption("Selecciona los contenidos en la caja izquierda:")
+col_disp, col_sel = st.columns(2)
 
-# Interfaz en paralelo
-col_disponibles, col_seleccionados = st.columns(2)
-
-with col_disponibles:
+with col_disp:
     st.info("📋 Contenidos desglosados:")
-    saberes_disponibles = SABERES_DETALLADOS[curso_seleccionado][bloque_elegido]
-    saberes_elegidos = st.multiselect(
-        "Haz clic para seleccionar:",
-        saberes_disponibles,
-        default=[]
-    )
+    saberes_bloque = SABERES_DETALLADOS[curso_seleccionado][bloque_elegido]
+    seleccion_actual = st.multiselect("Selecciona elementos:", saberes_bloque, default=[])
+    if st.button("➕ Añadir al plan"):
+        for elem in seleccion_actual:
+            txt = f"[{bloque_elegido}] {elem}"
+            if txt not in st.session_state["saberes_cesta"]:
+                st.session_state["saberes_cesta"].append(txt)
+        st.success("¡Guardados!")
 
-with col_seleccionados:
-    st.success("🎯 Contenidos seleccionados:")
-    if saberes_elegidos:
-        st.markdown(f"**Eje:** {bloque_elegido}")
-        for saber in saberes_elegidos:
+with col_sel:
+    st.success("🎯 Cesta de contenidos acumulados:")
+    if st.session_state["saberes_cesta"]:
+        for saber in st.session_state["saberes_cesta"]:
             st.markdown(f"**•** {saber}")
+        if st.button("🗑️ Vaciar cesta"):
+            st.session_state["saberes_cesta"] = []
+            st.rerun()
     else:
-        st.warning("La caja está vacía.")
+        st.warning("La cesta está vacía.")
 
 st.markdown("---")
 
-# Formulario final
 with st.form("formulario_SDA_avanzado"):
-    st.markdown("### 🎛️ 4. Parámetros Finales del Proyecto")
-    
-    centro_interes = st.text_input(
-        "Centro de Interés / Temática motora:",
-        placeholder="Ej: Las 'fake news', el cambio climático..."
-    )
-    
-    producto_final = st.selectbox(
-        "Producto Final Esperado:",
-        [
-            "Examen tradicional impreso (Desarrollo y test)",
-            "Cómic digital diseñado con la plataforma Pixton",
-            "Podcast o programa de radio literario en equipo",
-            "Debate formal en el aula con turnos (Oratoria)",
-            "Periódico digital escolar o reportaje escrito",
-            "Campaña publicitaria con cartelería digital",
-            "Antología lírica comentada e ilustrada",
-            "Representación teatral o lectura dramatizada"
-        ]
-    )
-    
+    st.markdown("### 🎛️ 4. Parámetros Finales")
+    centro_interes = st.text_input("Centro de Interés / Temática motora:", placeholder="Ej: Las 'fake news'...")
+    producto_final = st.selectbox("Producto Final:", [
+        "Examen tradicional impreso (Desarrollo y test)",
+        "Cómic digital diseñado con la plataforma Pixton",
+        "Podcast o programa de radio literario en equipo",
+        "Debate formal en el aula con turnos (Oratoria)",
+        "Periódico digital escolar o reportaje escrito",
+        "Campaña publicitaria con cartelería digital",
+        "Antología lírica comentada e ilustrada",
+        "Representación teatral o lectura dramatizada"
+    ])
     num_sesiones = st.slider("Sesiones:", min_value=3, max_value=12, value=6)
     st.form_submit_button("✨ Generar Situación de Aprendizaje")
 
-# Acción al enviar el formulario
 if centro_interes:
-    if not saberes_elegidos:
-        st.error("Por favor, selecciona al menos un saber básico.")
+    if not st.session_state["saberes_cesta"]:
+        st.error("Por favor, añade al menos un saber básico a tu cesta.")
     elif not centro_interes.strip():
         st.error("Por favor, introduce un centro de interés.")
     else:
-        with st.spinner("Leyendo pdf y diseñando la Unidad..."):
+        with st.spinner("Diseñando la Unidad con el PDF..."):
             try:
                 client = genai.Client(api_key=CLAVE_API)
-                parte_pdf_bocm = preparar_pdf_para_ia("decreto_madrid.pdf")
+                pdf = preparar_pdf_para_ia("decreto_madrid.pdf")
+                prompt = f"Actúa como catedrático experto. Usa el PDF decreto_madrid.pdf. Genera una Situación de Aprendizaje LOMLOE para {curso_seleccionado}. Saberes acumulados elegidos: {', '.join(st.session_state['saberes_cesta'])}. Centro de interés: {centro_interes}. Producto esperado: {producto_final}. Duración: {num_sesiones} sesiones. Estructura el documento con justificación, desglose por sesiones (inicio, desarrollo, cierre) adaptado al producto (ej. Pasos para usar Pixton o repaso para examen), criterios reales del PDF y medidas DÚA. Redacta de forma técnica, formal y limpia sin comentarios informales."
                 
-                # Texto de instrucciones cortado para evitar roturas de caja
-                t1 = "Actúa como un catedrático experto en Didáctica. "
-                t2 = f"Usa el PDF decreto_madrid.pdf. CURSO: {curso_seleccionado}. "
-                t3 = f"EJE: {bloque_elegido}. SABERES: {', '.join(saberes_elegidos)}. "
-                t4 = f"TEMA: {centro_interes}. PRODUCTO: {producto_final}. "
-                t5 = f"DURACIÓN: {num_sesiones} sesiones. Redacta una SDA LOMLOE "
-                t6 = "completa con inicio, desarrollo, cierre, criterios y DÚA. "
-                t7 = "Usa lenguaje técnico formal escolar y entrega el texto limpio."
-                
-                indicacion_texto = t1 + t2 + t3 + t4 + t5 + t6 + t7
-                
-                elementos_envio = []
-                if parte_pdf_bocm:
-                    elementos_envio.append(parte_pdf_bocm)
-                elementos_envio.append(indicacion_texto)
-                
-                response = client.models.generate_content(
-                    model='gemini-flash-latest',
-                    contents=elementos_envio,
-                )
+                envio = [pdf, prompt] if pdf else [prompt]
+                response = client.models.generate_content(model='gemini-flash-latest', contents=envio)
                 
                 if response and response.text:
                     st.success("¡Unidad diseñada con éxito!")
                     st.markdown("---")
                     st.markdown(response.text)
                     st.markdown("---")
-                    
-                    st.download_button(
-                        label="📥 Descargar Proyecto (.txt)",
-                        data=response.text,
-                        file_name="SDA_Planificada.txt",
-                        mime="text/plain"
-                    )
+                    st.download_button(label="📥 Descargar Proyecto (.txt)", data=response.text, file_name="SDA_Planificada.txt", mime="text/plain")
                 else:
                     st.error("La IA respondió pero el texto llegó vacío.")
-                    
             except Exception as e:
                 st.error(f"Error al conectar con la IA de Google: {str(e)}")
