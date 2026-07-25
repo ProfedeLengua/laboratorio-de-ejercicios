@@ -1,15 +1,15 @@
 [theme]
-# Color de fondo central (Blanco puro, limpio y moderno)
+# Color de fondo central (Blanco limpio y luminoso)
 backgroundColor = "#FFFFFF"
 
-# Color de la barra lateral (Azul marino académico profundo)
-secondaryBackgroundColor = "#0F172A"
+# Color de la barra lateral (Azul Niebla suave: máxima legibilidad para textos y cajas)
+secondaryBackgroundColor = "#E2E8F0"
 
-# Color del texto principal (Gris oscuro de alta legibilidad)
+# Color del texto principal (Gris pizarra oscuro, muy legible)
 textColor = "#1E293B"
 
-# Color de los botones y elementos activos (Azul cobalto institucional)
-primaryColor = "#1D4ED8"
+# Color de los botones y elementos activos (Azul Prusia institucional)
+primaryColor = "#1E40AF"
 
-# Tipografía (Sans-Serif geométrica, moderna y corporativa)
-font = "sans serif"
+# Tipografía (Serif clásica para títulos académicos elegantes y humanos)
+font = "serif"
