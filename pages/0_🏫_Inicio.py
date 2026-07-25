@@ -1,49 +1,63 @@
 import streamlit as st
 
-# Configuración visual de la pantalla de bienvenida
+# Título y presentación académica de la plataforma
 st.title("🏫 Centro de Recursos Didácticos de Lengua")
-st.subheader("Plataforma Inteligente para el Profesorado de ESO (Comunidad de Madrid)")
+st.subheader("Plataforma Inteligente para el Profesorado de ESO")
+st.caption("Herramienta de código abierto basada en el Decreto 65/2022")
 st.markdown("---")
 
 st.write(
-    "¡Bienvenido/a al Laboratorio Pedagógico! Esta aplicación multiplataforma está diseñada "
-    "para ayudar al profesorado de Secundaria a automatizar y enriquecer su práctica docente "
-    "bajo las directrices oficiales del **Decreto 65/2022 de la Comunidad de Madrid**."
+    "¡Sé bienvenido a nuestro Laboratorio Pedagógico! Esta aplicación multiplataforma "
+    "está diseñada para automatizar, agilizar y enriquecer tu práctica "
+    "docente diaria. Recuerda que es una herramienta de APOYO y nunca un sustituto. "
+    "Este centro de recursos utiliza como base el Decreto 65/2022 del BOCM. "
 )
 
-st.info("👈 Utiliza el menú lateral izquierdo para navegar por las distintas herramientas de la aplicación.")
+st.info("👈 Utiliza el menú lateral izquierdo para navegar por las herramientas.")
 
-st.markdown("### 🛠️ Herramientas Disponibles:")
+st.markdown("### 🛠️ Ecosistema de Herramientas Diseñadas:")
 
+# Distribución equilibrada en dos columnas estéticas
 col1, col2 = st.columns(2)
 
 with col1:
     st.markdown("#### 📝 Generador de Exámenes")
     st.write(
-        "Crea textos inéditos adaptados por la IA en la modalidad que elijas "
-        "con actividades de comprensión, léxico, historia de la literatura y sintaxis "
-        "acordes al curso (1º-4º ESO). Incluye solucionario para el docente."
+        "Crea textos inéditos y adaptados por la IA en la modalidad que elijas "
+        "con actividades de comprensión, léxico, historia de la literatura "
+        "y sintaxis acordes al curso. Incluye solucionario detallado."
     )
     
     st.markdown("#### 📊 Rúbricas Formativas")
     st.write(
-        "Diseña matrices de evaluación en formato tabla ponderadas con los criterios "
-        "oficiales de Madrid. Niveles de logro totalmente editables y listos para usar."
+        "Diseña descriptores y matrices de evaluación en formato tabla Markdown con los "
+        "criterios oficiales de Madrid. Desglosa los indicadores en 4 niveles "
+        "de logro listos para Additio o iDoceo."
     )
 
 with col2:
     st.markdown("#### 🧭 Situaciones de Aprendizaje")
     st.write(
-        "Planifica secuencias didácticas completas por proyectos (LOMLOE). "
-        "Estructuradas en sesiones, con justificación, principios DÚA y asignación "
-        "de Competencias Específicas."
+        "Planifica unidades didácticas a partir de la combinación de "
+        "contenidos y saberes básicos de los distintos bloques curriculares "
+        "y adaptarlos al producto final que tú elijas."
     )
     
-    st.markdown("#### 📚 Saberes Básicos Madrid")
+    st.markdown("#### 🗣️ Taller de Oratoria y Comentario")
     st.write(
-        "Consulta rápida de los bloques de contenido normativos para agilizar "
-        "la redacción de tus memorias de departamento."
+        "Fabrica guías completas de comentario estilístico o fichas de debate "
+        "formal para el aula con argumentos contrapuestos, falacias lógicas "
+        "más comunes y léxico formal obligatorio."
     )
 
 st.markdown("---")
-st.caption("Herramienta pedagógica de código abierto | 100% Gratuita")
+st.markdown("#### 🧠 Módulo de Adaptaciones avanzadas y DÚA")
+st.write(
+    "Sube cualquier archivo PDF con tus actividades o exámenes originales y "
+    "selecciona una situación o diagnóstico (Dislexia, TDAH, Altas Capacidades, Español L2). "
+    "La IA rediseñará el material aplicando pautas del Diseño Universal para el "
+    "Aprendizaje y redactará la justificación pedagógica para tu memoria."
+)
+
+st.markdown("---")
+st.caption("Plataforma Escolar de Código Abierto | 100% Gratuita para el Docente")
