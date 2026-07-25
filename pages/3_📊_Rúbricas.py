@@ -3,9 +3,9 @@ from google import genai
 import os
 import base64
 
-st.title("📊 Diseñador de Rúbricas Formativas")
-st.subheader("Matrices de Evaluación LOMLOE (Comunidad de Madrid)")
-st.caption("Generación automatizada de tablas de evaluación basadas en el Decreto 65/2022")
+st.title("Diseñador de Rúbricas Formativas")
+st.subheader("Matrices de Evaluación según la LOMLOE")
+st.caption("Generación automatizada de tablas de evaluación basadas en el Decreto 65/2022 del BOCM")
 
 # Clave de la API segura
 CLAVE_API = st.secrets["gemini_key"]
@@ -31,6 +31,7 @@ with st.form("formulario_rubricas"):
         [
             "Cómic digital diseñado con la plataforma Pixton",
             "Examen tradicional impreso (Desarrollo y test)",
+            "Exposición oral para la clase",
             "Podcast o programa de radio literario en equipo",
             "Debate formal en el aula con turnos (Oratoria)",
             "Periódico digital escolar o reportaje escrito",
@@ -45,7 +46,7 @@ with st.form("formulario_rubricas"):
         placeholder="Ej: Coherencia textual, uso de nexos, ortografía, creatividad..."
     )
     
-    st.form_submit_button("✨ Diseñar Rúbrica en Tabla")
+    st.form_submit_button(" Diseñar Rúbrica en Tabla")
 
 if producto_evaluar:
     with st.spinner("Leyendo decreto_madrid.pdf y redactando la matriz de evaluación..."):
