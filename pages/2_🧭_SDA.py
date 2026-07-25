@@ -3,8 +3,8 @@ from google import genai
 import os
 import base64
 
-st.title("🧭 Diseñador de Situaciones de Aprendizaje")
-st.subheader("Planificación de Secuencias LOMLOE (Madrid)")
+st.title("Diseñador de Situaciones de Aprendizaje")
+st.subheader("Planificación de Secuencias LOMLOE")
 st.caption("Selección interactiva y acumulativa de saberes básicos")
 
 CLAVE_API = st.secrets["gemini_key"]
@@ -99,7 +99,7 @@ def preparar_pdf_para_ia(nombre_archivo):
 if "saberes_cesta" not in st.session_state:
     st.session_state["saberes_cesta"] = []
 
-st.markdown("### 🎛️ 1. Nivel Académico")
+st.markdown("### 1. Nivel Académico")
 curso_seleccionado = st.selectbox("Selecciona el Curso de ESO:", ["1º de ESO", "2º de ESO", "3º de ESO", "4º de ESO"])
 
 if "curso_previo" not in st.session_state:
@@ -108,15 +108,15 @@ elif st.session_state["curso_previo"] != curso_seleccionado:
     st.session_state["saberes_cesta"] = []
     st.session_state["curso_previo"] = curso_seleccionado
 
-st.markdown("### 📚 2. Bloque Curricular (Decreto 65/2022)")
+st.markdown("### 2. Bloque Curricular (Decreto 65/2022)")
 bloques_disponibles = list(SABERES_DETALLADOS[curso_seleccionado].keys())
 bloque_elegido = st.selectbox("Elige el bloque específico:", bloques_disponibles)
 
-st.markdown("### 🗂️ 3. Configuración de Saberes Básicos")
+st.markdown("### 3. Configuración de Saberes Básicos")
 col_disp, col_sel = st.columns(2)
 
 with col_disp:
-    st.info("📋 Contenidos desglosados:")
+    st.info( "Contenidos desglosados:")
     saberes_bloque = SABERES_DETALLADOS[curso_seleccionado][bloque_elegido]
     seleccion_actual = st.multiselect("Selecciona elementos:", saberes_bloque, default=[])
     if st.button("➕ Añadir al plan"):
@@ -127,7 +127,7 @@ with col_disp:
         st.success("¡Guardados!")
 
 with col_sel:
-    st.success("🎯 Cesta de contenidos acumulados:")
+    st.success("Cesta de contenidos acumulados:")
     if st.session_state["saberes_cesta"]:
         for saber in st.session_state["saberes_cesta"]:
             st.markdown(f"**•** {saber}")
@@ -140,7 +140,7 @@ with col_sel:
 st.markdown("---")
 
 with st.form("formulario_SDA_avanzado"):
-    st.markdown("### 🎛️ 4. Parámetros Finales")
+    st.markdown("### 4. Parámetros Finales")
     centro_interes = st.text_input("Centro de Interés / Temática motora:", placeholder="Ej: Las 'fake news'...")
     producto_final = st.selectbox("Producto Final:", [
         "Examen tradicional impreso (Desarrollo y test)",
@@ -153,7 +153,7 @@ with st.form("formulario_SDA_avanzado"):
         "Representación teatral o lectura dramatizada"
     ])
     num_sesiones = st.slider("Sesiones:", min_value=3, max_value=12, value=6)
-    st.form_submit_button("✨ Generar Situación de Aprendizaje")
+    st.form_submit_button(" Generar Situación de Aprendizaje")
 
 if centro_interes:
     if not st.session_state["saberes_cesta"]:
