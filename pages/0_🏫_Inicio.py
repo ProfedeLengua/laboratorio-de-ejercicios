@@ -1,11 +1,5 @@
 import streamlit as st
 
-# 🌟 IMAGEN DE CABECERA DE ALTA CALIDAD EDITORIAL (Estética de biblioteca clásica limpia)
-st.image(
-    "https://unsplash.com",
-    use_container_width=True
-)
-
 st.title("Centro de Recursos Didácticos de Lengua")
 st.subheader("Plataforma Inteligente para el Profesorado de ESO")
 st.caption("Herramienta de código abierto basada en el Decreto 65/2022")
