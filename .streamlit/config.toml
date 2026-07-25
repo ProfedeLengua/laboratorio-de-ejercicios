@@ -1,0 +1,15 @@
+[theme]
+# Color de fondo de la zona central (Blanco crema cálido de papel de libro)
+backgroundColor = "#FDFBF7"
+
+# Color de fondo de la barra lateral (Gris suave de cuaderno técnico)
+secondaryBackgroundColor = "#F4F1EA"
+
+# Color del texto principal (Gris carbón oscuro editorial, más suave que el negro)
+textColor = "#2D312E"
+
+# Color de los botones y elementos activos (El burdeos académico de corrección)
+primaryColor = "#991B1B"
+
+# Tipografía para los títulos (Serif clásica de imprenta / máquina de escribir)
+font = "serif"
