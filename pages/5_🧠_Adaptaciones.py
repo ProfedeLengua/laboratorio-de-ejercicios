@@ -3,8 +3,8 @@ from google import genai
 import os
 import base64
 
-st.title("🧠 Generador de Adaptaciones y DÚA")
-st.subheader("Atención a la Diversidad e Inclusión Educativa (Madrid)")
+st.title("Generador de Adaptaciones y DÚA")
+st.subheader("Atención a la Diversidad e Inclusión Educativa")
 st.caption("Adaptación inmediata de materiales mediante subida de archivos PDF")
 
 # Clave de la API segura
@@ -38,13 +38,13 @@ with st.form("formulario_inclusion_pdf"):
         ]
     )
     
-    # 🌟 EL NUEVO BOTÓN MÁGICO: Lector de archivos PDF subidos por el profesor
+    # EL NUEVO BOTÓN MÁGICO: Lector de archivos PDF subidos por el profesor
     archivo_subido = st.file_uploader(
         "Sube aquí el PDF del examen, apuntes o actividades que deseas adaptar:",
         type=["pdf"]
     )
     
-    st.form_submit_button("✨ Aplicar Adaptación Inclusiva al PDF")
+    st.form_submit_button(" Aplicar Adaptación Inclusiva al PDF")
 
 if archivo_subido is not None:
     with st.spinner("Leyendo tus materiales y aplicando las pautas DÚA (esto puede tardar unos segundos)..."):
