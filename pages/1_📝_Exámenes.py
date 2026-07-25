@@ -3,10 +3,10 @@ from google import genai
 import json
 
 # Configuración visual de la página web (Estilo académico)
-st.set_page_config(page_title="Laboratorio de Lengua y Literatura", page_icon="📝", layout="centered")
+st.set_page_config(page_title="Generador de comprensiones lectoras", layout="centered")
 
-st.title("📝 Laboratorio de Lengua y Literatura")
-st.subheader("Generador inteligente de exámenes de ESO (Comunidad de Madrid)")
+st.title("Generador de comprensiones lectoras")
+st.subheader("Diseñador inteligente de ejercicios y exámenes")
 st.caption("Herramienta de código abierto basada en el Decreto 65/2022")
 
 # Leemos la clave de forma segura desde el panel secreto de Streamlit
@@ -40,7 +40,7 @@ with st.form("formulario_examen"):
         p3 = st.checkbox("Análisis Sintáctico", value=True)
         p4 = st.checkbox("Educación Literaria", value=False)
         
-    boton_generar = st.form_submit_button("✨ Generar Examen Gratis")
+    boton_generar = st.form_submit_button("Generar Examen Gratis")
 
 # Acción al pulsar el botón
 if boton_generar:
