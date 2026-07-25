@@ -3,8 +3,8 @@ from google import genai
 import os
 import base64
 
-st.title("🗣️ Taller de Comentario de Texto y Oratoria")
-st.subheader("Laboratorio de Expresión y Comprensión Crítica (Madrid)")
+st.title("Taller de Comentario de Texto y Oratoria")
+st.subheader("Laboratorio de Expresión y Comprensión Crítica")
 st.caption("Recursos didácticos para el desarrollo de la retórica y el análisis textual")
 
 # Clave de la API segura
@@ -28,8 +28,8 @@ with st.form("formulario_talleres"):
     
     tipo_taller = st.radio(
         "Selecciona la herramienta que deseas generar:",
-        ["📝 Guía de Comentario de Texto (Lectura y Crítica)", 
-         "🗣️ Guía de Debate Formal y Oratoria (Retórica)"]
+        ["Guía de Comentario de Texto (Lectura y Crítica)", 
+         "Guía de Debate Formal y Oratoria (Retórica)"]
     )
     
     foco_tematico = st.text_input(
@@ -37,7 +37,7 @@ with st.form("formulario_talleres"):
         placeholder="Ej: Bécquer, El Quijote, Las redes sociales, El cambio climático..."
     )
     
-    st.form_submit_button("✨ Fabricar Material Didáctico")
+    st.form_submit_button("Fabricar Material Didáctico")
 
 if foco_tematico:
     if not foco_tematico.strip():
