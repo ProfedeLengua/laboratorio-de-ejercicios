@@ -19,7 +19,7 @@ def preparar_pdf_para_ia(nombre_archivo):
     return None
 
 with st.form("formulario_talleres"):
-    st.markdown("### 🎛️ Parámetros del Taller")
+    st.markdown("### Parámetros del Taller")
     
     curso = st.selectbox(
         "Selecciona el Curso de ESO:",
