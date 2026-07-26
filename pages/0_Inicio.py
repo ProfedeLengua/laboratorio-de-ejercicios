@@ -1,6 +1,6 @@
 import streamlit as st
 
-# Imagen de cabecera de alta calidad editorial
+# Imagen de cabecera académica ultra-estable y libre de bloqueos de red
 st.image(
     "https://unsplash.com",
     use_container_width=True
