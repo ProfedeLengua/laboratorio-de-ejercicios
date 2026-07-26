@@ -20,7 +20,7 @@ def preparar_pdf_ley(nombre_archivo):
     return None
 
 with st.form("formulario_inclusion_pdf"):
-    st.markdown("### 🎛️ Parámetros de Inclusión")
+    st.markdown("### Parámetros de Inclusión")
     
     curso = st.selectbox(
         "Selecciona el Curso de ESO:",
