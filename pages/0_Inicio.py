@@ -1,5 +1,11 @@
 import streamlit as st
 
+# Imagen de cabecera de alta calidad editorial
+st.image(
+    "https://unsplash.com",
+    use_container_width=True
+)
+
 st.title("Centro de Recursos Didácticos de Lengua")
 st.subheader("Plataforma Inteligente para el Profesorado de ESO")
 st.caption("Herramienta de código abierto basada en el Decreto 65/2022")
@@ -14,49 +20,53 @@ st.write(
 
 st.info("👈 Utiliza el menú lateral izquierdo para navegar por las herramientas.")
 
-st.markdown("### 🛠️ Ecosistema de Herramientas Diseñadas:")
-
-# Distribución equilibrada en dos columnas estéticas
+st.markdown("### Ecosistema de Herramientas Diseñadas:")
 col1, col2 = st.columns(2)
 
 with col1:
     st.markdown("#### Generador de Exámenes")
     st.write(
-        "Crea textos inéditos y adaptados por la IA en la modalidad que elijas "
-        "con actividades de comprensión, léxico, historia de la literatura "
-        "y sintaxis acordes al curso. Incluye solucionario detallado."
+        "Crea textos con IA en la modalidad que elijas, para el curso que quieras, "
+        "con actividades de comprensión, léxico, historia de la literatura, "
+        "morfología y sintaxis. Incluye solucionario detallado."
     )
     
-    st.markdown("#### Rúbricas Formativas")
+    st.markdown("#### Rúbricas y Descriptores")
     st.write(
-        "Diseña descriptores y matrices de evaluación en formato tabla Markdown con los "
+        "Diseña descriptores y rúbricas de evaluación con los "
         "criterios oficiales de Madrid. Desglosa los indicadores en 4 niveles "
         "de logro listos para Additio o iDoceo."
+    )
+    
+    st.markdown("#### Módulo de Adaptación y DÚA")
+    st.write(
+        "Sube cualquier archivo PDF con tus actividades o exámenes originales. "
+        "La IA rediseñará el material aplicando pautas DÚA según el diagnóstico "
+        "elegido y redactará la justificación pedagógica."
     )
 
 with col2:
     st.markdown("#### Situaciones de Aprendizaje")
     st.write(
-        "Planifica unidades didácticas a partir de la combinación de "
-        "contenidos y saberes básicos de los distintos bloques curriculares "
+        "Planifica unidades didácticas a partir de la combinación de contenidos "
+        "y saberes básicos de los distintos bloques curriculares "
         "y adaptarlos al producto final que tú elijas."
     )
     
-    st.markdown("#### Taller de Oratoria y Comentario")
+    st.markdown("#### Taller de Oratoria y Comentario de texto")
     st.write(
         "Fabrica guías completas de comentario estilístico o fichas de debate "
         "formal para el aula con argumentos contrapuestos, falacias lógicas "
         "más comunes y léxico formal obligatorio."
     )
-
-st.markdown("---")
-st.markdown("#### Módulo de Adaptaciones avanzadas y DÚA")
-st.write(
-    "Sube cualquier archivo PDF con tus actividades o exámenes originales y "
-    "selecciona una situación o diagnóstico (Dislexia, TDAH, Altas Capacidades, Español L2). "
-    "La IA rediseñará el material aplicando pautas del Diseño Universal para el "
-    "Aprendizaje y redactará la justificación pedagógica para tu memoria."
-)
+    
+    # EL NUEVO APARTADO EN LA PORTADA
+    st.markdown("#### Cuaderno digital del Profesor")
+    st.write(
+        "Diseña tus listas y planillas de registro de aula dividida en control diario "
+        "continuo (actitud, material, lectura) y calificaciones trimestrales "
+        "de exámenes, con cálculo automatizado de medias ponderadas LOMLOE."
+    )
 
 st.markdown("---")
 st.caption("Plataforma Escolar de Código Abierto | 100% Gratuita para el Docente")
