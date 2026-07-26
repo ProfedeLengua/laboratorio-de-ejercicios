@@ -1,9 +1,9 @@
 import streamlit as st
 
-# 🌟 BANNER DIGITAL ACADÉMICO: Dirección fija ultra-estable de Wikimedia Commons (Inmune a bloqueos)
+# 🌟 ACTUALIZACIÓN 2026: Corregida la propiedad de ajuste de ancho a width='stretch'
 st.image(
     "https://wikimedia.org",
-    use_container_width=True
+    width="stretch"
 )
 
 st.title("Centro de Recursos Didácticos de Lengua")
