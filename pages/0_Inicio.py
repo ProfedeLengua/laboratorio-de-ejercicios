@@ -1,8 +1,8 @@
 import streamlit as st
 
-# Imagen de cabecera académica ultra-estable y libre de bloqueos de red
+# 🌟 BANNER DIGITAL ACADÉMICO: Dirección fija ultra-estable de Wikimedia Commons (Inmune a bloqueos)
 st.image(
-    "https://unsplash.com",
+    "https://wikimedia.org",
     use_container_width=True
 )
 
