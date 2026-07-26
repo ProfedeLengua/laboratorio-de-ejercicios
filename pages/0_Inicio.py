@@ -1,10 +1,7 @@
 import streamlit as st
 
-# 🌟 ACTUALIZACIÓN 2026: Corregida la propiedad de ajuste de ancho a width='stretch'
-st.image(
-    "https://wikimedia.org",
-    width="stretch"
-)
+# Cargamos la imagen de Wikimedia sin parámetros de ancho complejos para evitar bloqueos del servidor
+st.image("https://wikimedia.org")
 
 st.title("Centro de Recursos Didácticos de Lengua")
 st.subheader("Plataforma Inteligente para el Profesorado de ESO")
