@@ -1,6 +1,6 @@
 import streamlit as st
 
-# Cargamos la imagen de Wikimedia sin parámetros de ancho complejos para evitar bloqueos del servidor
+# Dirección fija de Wikimedia Commons abierta en formato nativo puro
 st.image("https://wikimedia.org")
 
 st.title("Centro de Recursos Didácticos de Lengua")
