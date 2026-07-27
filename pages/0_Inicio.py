@@ -1,7 +1,13 @@
 import streamlit as st
 
-# Dirección fija de Wikimedia Commons abierta en formato nativo puro
-st.image("https://wikimedia.org")
+# 🌟 CABECERA EDITORIAL BLINDADA: Reemplaza la imagen por un contenedor tipográfico premium
+st.markdown(
+    "<div style='background-color: #1E40AF; padding: 25px; border-radius: 8px; margin-bottom: 25px; text-align: center;'>"
+    "<h1 style='color: #FFFFFF; margin: 0; font-family: serif; font-size: 32px;'>Laboratorio Pedagógico de Lengua</h1>"
+    "<p style='color: #E2E8F0; margin: 5px 0 0 0; font-size: 16px;'>Comunidad de Madrid — Decreto 65/2022</p>"
+    "</div>",
+    unsafe_allow_html=True
+)
 
 st.title("Centro de Recursos Didácticos de Lengua")
 st.subheader("Plataforma Inteligente para el Profesorado de ESO")
