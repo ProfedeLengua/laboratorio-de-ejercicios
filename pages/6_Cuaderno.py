@@ -1,111 +1,100 @@
 import streamlit as st
 import pandas as pd
 
-st.title("Cuaderno del Profesor Digital")
-st.subheader("Registro de Aula: Control Diario y Calificaciones Trimestrales")
-st.caption("Planilla interactiva dual con ponderación automática LOMLOE")
+st.title("📓 Cuaderno del Profesor con Excel")
+st.subheader("Importación Dinámica y Calificación Automatizada LOMLOE")
+st.caption("Cálculo ponderado basado en tu escala diaria: 0 (nada), 5 (regular) y 10 (perfecto)")
 
 CLAVE_API = st.secrets["gemini_key"]
 
-st.markdown("### ⚙️ 1. Configuración del Nivel")
-curso = st.selectbox("Selecciona el curso:", ["1º de ESO", "2º de ESO", "3º de ESO", "4º de ESO"])
+# 1. Configuración de parámetros de grupo y evaluación
+st.markdown("### 🎛️ 1. Configuración del Grupo y Criterios")
+col_g1, col_g2 = st.columns(2)
+with col_g1:
+    curso = st.selectbox("Curso destinatario:", ["1º de ESO", "2º de ESO", "3º de ESO", "4º de ESO"])
+    grupo = st.text_input("Identificador del Grupo:", placeholder="Ej: A, B, C, Diver...")
+with col_g2:
+    peso_parciales = st.slider("Peso total Exámenes Parciales (%):", 10, 80, 40)
+    peso_final = st.slider("Peso Examen Final de Evaluación (%):", 10, 80, 50)
 
-# CREACIÓN DE LAS DOS SECCIONES CLARAMENTE SEPARADAS
-pestana_diaria, pestaña_trimestral = st.tabs([
-    "Lista A: Seguimiento Semanal (10%)", 
-    "Lista B: Calificaciones Trimestrales (90%)"
-])
+if (peso_parciales + peso_final) != 90:
+    st.error("⚠️ La suma de parciales y examen final debe ser exactamente el 90%. El 10% restante es el control diario.")
 
-# BASE DE DATOS COMÚN EN MEMORIA PARA AMBAS TABLAS
-if "df_alumnos" not in st.session_state:
-    datos_base = {
-        "Alumno/a": ["García López, Alejandro", "Martínez Soler, Elena", "Sánchez Ruiz, Hugo"],
-        "Material (S/N)": [True, True, False],
-        "Atención (S/N)": [True, True, True],
-        "Trabajo Diario (0-10)": [7.0, 8.5, 5.0],
-        "Lectura Clase (0-10)": [6.5, 9.0, 4.5],
-        "Parcial 1": [7.0, 8.5, 5.0],
-        "Parcial 2": [6.5, 9.0, 4.5],
-        "Parcial 3": [7.5, 8.0, 6.0],
-        "Trabajo y Esfuerzo": [7.0, 9.0, 6.0],
-        "Examen Final": [6.0, 9.5, 5.5]
-    }
-    st.session_state["df_alumnos"] = pd.DataFrame(datos_base)
+st.markdown("---")
 
-# -------------------------------------------------------------
-# PESTAÑA 1: SEGUIMIENTO SEMANAL CONTINUO
-# -------------------------------------------------------------
-with pestana_diaria:
-    st.markdown("#### Registro de Trabajo, Actitud y Lectura Diaria")
-    st.caption("Haz doble clic para cambiar notas o marcar casillas. Los cambios se guardan al vuelo:")
-    
-    # Filtramos la tabla para mostrar solo las columnas diarias
-    columnas_diarias = ["Alumno/a", "Material (S/N)", "Atención (S/N)", "Trabajo Diario (0-10)", "Lectura Clase (0-10)"]
-    df_diario = st.session_state["df_alumnos"][columnas_diarias]
-    
-    tabla_diaria = st.data_editor(df_diario, num_rows="dynamic", use_container_width=True, key="editor_diario")
-    
-    # Sincronizamos los cambios realizados en esta tabla con el almacén central
-    st.session_state["df_alumnos"].update(tabla_diaria)
+# 2. Entrada de archivos Excel vivos del profesor
+st.markdown("### 📊 2. Carga de Planillas de Evaluación")
+st.caption("Arrastra los dos archivos Excel independientes desde tu ordenador:")
 
-# -------------------------------------------------------------
-# PESTAÑA 2: SEGUIMIENTO TRIMESTRAL Y ACTA DE NOTAS
-# -------------------------------------------------------------
-with pestaña_trimestral:
-    st.markdown("#### Calificaciones de Exámenes y Evaluación Ponderada")
-    st.caption("Ajusta los pesos para el 90% restante de la nota (el otro 10% es la actitud diaria de la Lista A):")
-    
-    col1, col2 = st.columns(2)
-    with col1:
-        peso_parciales = st.slider("Peso total Exámenes Parciales (%):", 10, 80, 40)
-    with col2:
-        peso_final = st.slider("Peso Examen Final (%):", 10, 80, 50)
+archivo_diario = st.file_uploader("Subir Lista A: Seguimiento Diario Semanal (.xlsx)", type=["xlsx"])
+archivo_trimestral = st.file_uploader("Subir Lista B: Notas de Exámenes (.xlsx)", type=["xlsx"])
+
+# 3. Procesamiento matemático de las listas en paralelo
+if archivo_diario and archivo_trimestral:
+    try:
+        # Leemos los Excels usando la librería pandas
+        df_diario = pd.read_excel(archivo_diario)
+        df_trimestral = pd.read_excel(archivo_trimestral)
         
-    if (peso_parciales + peso_final) != 90:
-        st.error("⚠️ Alerta: La suma de parciales y examen final debe ser exactamente el 90%.")
+        st.success(f"¡Archivos de {curso} {grupo} cargados y vinculados correctamente!")
         
-    st.markdown("---")
-    
-    # Filtramos la tabla para mostrar solo las columnas de evaluación cuantitativa
-    columnas_trimestrales = ["Alumno/a", "Parcial 1", "Parcial 2", "Parcial 3", "Trabajo y Esfuerzo", "Examen Final"]
-    df_trimestral = st.session_state["df_alumnos"][columnas_trimestrales]
-    
-    tabla_trimestral = st.data_editor(df_trimestral, num_rows="dynamic", use_container_width=True, key="editor_trimestral")
-    st.session_state["df_alumnos"].update(tabla_trimestral)
-    
-    st.markdown("---")
-    
-    # BOTÓN DE CÁLCULO INTELIGENTE UNIFICADO
-    if st.button("Ejecutar Evaluación Final del Trimestre"):
-        st.markdown("###Acta de Notas Finales")
-        lineas_acta = []
+        # Mostramos las dos pestañas para que el profesor verifique los datos subidos
+        tab_v1, tab_v2 = st.tabs(["📋 Vista Control Diario (0-5-10)", "🏆 Vista Calificaciones"])
         
-        # Recorremos la tabla unificada final calculando las dos listas a la vez
-        for index, row in st.session_state["df_alumnos"].iterrows():
-            # 1. Cálculo matemático de la Lista A (Seguimiento Semanal -> 10% fijo)
-            puntos_actitud = 0.0
-            if row["Material (S/N)"]: puntos_actitud += 2.5
-            if row["Atención (S/N)"]: puntos_actitud += 2.5
-            puntos_actitud += (row["Trabajo Diario (0-10)"] * 0.25)
-            puntos_actitud += (row["Lectura Clase (0-10)"] * 0.25)
+        with tab_v1:
+            st.dataframe(df_diario, use_container_width=True)
+        with tab_v2:
+            st.dataframe(df_trimestral, use_container_width=True)
             
-            # 2. Cálculo matemático de la Lista B (Seguimiento Trimestral -> 90%)
-            media_parciales = (row["Parcial 1"] + row["Parcial 2"] + row["Parcial 3"]) / 3
-            # Incorporamos la nota de esfuerzo como modulador o ayuda en la media
-            nota_examenes = (media_parciales * (peso_parciales / 100)) + (row["Examen Final"] * (peso_final / 100))
+        st.markdown("---")
+        
+        # 🧮 BOTÓN DE PROCESAMIENTO MATEMÁTICO AVANZADO
+        if st.button("🧮 Procesar Medias Ponderadas Finales"):
+            st.markdown(f"### 🏆 Acta de Evaluación Final — {curso} Grupo {grupo}")
+            lineas_acta = []
             
-            # 3. FUSIÓN DE AMBAS LISTAS
-            nota_final_calculada = (puntos_actitud * 0.10) + nota_examenes
-            nota_redondeada = round(nota_final_calculada, 2)
-            estado = "Aprobado" if nota_redondeada >= 5 else "Suspenso"
+            # Recorremos la lista de alumnos basándonos en la planilla trimestral
+            for index, row in df_trimestral.iterrows():
+                nombre_alumno = row["Alumno/a"]
+                
+                # 🌟 TRATAMIENTO L LISTA A (DIARIO): Buscamos al alumno en el Excel semanal
+                fila_diario = df_diario[df_diario["Alumno/a"] == nombre_alumno]
+                
+                nota_diario_final = 0.0
+                if not fila_diario.empty:
+                    # Extraemos todas las columnas que no sean el nombre del alumno (es decir, los días de clase)
+                    columnas_fechas = [col for col in df_diario.columns if col != "Alumno/a"]
+                    valores_dias = fila_diario[columnas_fechas].values[0]
+                    
+                    # Convertimos los datos a números y filtramos celdas vacías
+                    valores_validos = [float(v) for f_v in [valores_dias] for v in f_v if pd.notna(v)]
+                    
+                    if valores_validos:
+                        # Calculamos la media de todos los 0, 5 y 10 anotados en el trimestre
+                        nota_diario_final = sum(valores_validos) / len(valores_validos)
+                
+                # 🌟 TRATAMIENTO DE LISTA B (EXÁMENES -> 90%)
+                media_parciales = (row["Parcial 1"] + row["Parcial 2"] + row["Parcial 3"]) / 3
+                nota_cuantitativa = (media_parciales * (peso_parciales / 100)) + (row["Examen Final"] * (peso_final / 100))
+                
+                # 🌟 FUSIÓN MATEMÁTICA DEFINITIVA (10% Diario + 90% Exámenes)
+                nota_final = (nota_diario_final * 0.10) + nota_cuantitativa
+                nota_redondeada = round(nota_final, 2)
+                estado = "Aprobado" if nota_redondeada >= 5 else "Suspenso"
+                
+                st.write(f"• **{nombre_alumno}** — Control Diario Medio: {round(nota_diario_final,2)} | Nota Final Trimestre: **{nota_redondeada}** ({estado})")
+                lineas_acta.append(f"{nombre_alumno};{nota_redondeada};{estado}")
+                
+            texto_acta = "\n".join(lineas_acta)
+            st.download_button(
+                label="📥 Descargar Acta de Calificaciones Oficial (.txt)",
+                data=texto_acta,
+                file_name=f"Acta_Notas_{curso.replace(' ', '')}_{grupo}.txt",
+                mime="text/plain"
+            )
             
-            st.write(f"**{row['Alumno/a']}** — Nota final ponderada: **{nota_redondeada}** ({estado})")
-            lineas_acta.append(f"{row['Alumno/a']};{nota_redondeada};{estado}")
-            
-        texto_acta = "\n".join(lineas_acta)
-        st.download_button(
-            label="📥 Descargar Acta de Notas (.txt)",
-            data=texto_acta,
-            file_name=f"Acta_Notas_{curso.replace(' ', '')}.txt",
-            mime="text/plain"
-        )
+    except Exception as e:
+        st.error(f"Error técnico al leer las columnas de los Excels: {str(e)}")
+        st.info("Asegúrate de que ambos Excels tengan una columna llamada exactamente 'Alumno/a' en la primera celda.")
+else:
+    st.info("Por favor, sube los dos archivos Excel de tu grupo para desbloquear el procesador de actas.")
